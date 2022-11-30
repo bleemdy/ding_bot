@@ -16,23 +16,19 @@ type Context struct {
 
 func (c Context) SendText(text string) {
 	content := message.Text{
-		Basic: message.Basic{
-			Text:      text,
-			Webhook:   c.Webhook,
-			AtUserIds: c.Message.SenderStaffId,
-		},
+		Text:      text,
+		Webhook:   c.Webhook,
+		AtUserIds: c.Message.SenderStaffId,
 	}
 	c.bot.messageManager.Send(content)
 }
 
 func (c Context) SendMarkDown(title, text string) {
 	content := message.Markdown{
-		Title: title,
-		Basic: message.Basic{
-			Text:      text,
-			Webhook:   c.Webhook,
-			AtUserIds: c.Message.SenderStaffId,
-		},
+		Title:     title,
+		Text:      text,
+		Webhook:   c.Webhook,
+		AtUserIds: c.Message.SenderStaffId,
 	}
 	c.bot.messageManager.Send(content)
 }
@@ -42,11 +38,9 @@ func (c Context) SendActionCard(title, text, singleTitle, singleURL string) {
 		Title:       title,
 		SingleURL:   singleURL,
 		SingleTitle: singleTitle,
-		Basic: message.Basic{
-			Text:      text,
-			Webhook:   c.Webhook,
-			AtUserIds: c.Message.SenderStaffId,
-		},
+		Text:        text,
+		Webhook:     c.Webhook,
+		AtUserIds:   c.Message.SenderStaffId,
 	}
 	c.bot.messageManager.Send(content)
 }

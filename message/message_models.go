@@ -1,12 +1,8 @@
 package message
 
-type Basic struct {
-	Webhook, AtUserIds, Text string
-}
-
 // Text 文本消息
 type Text struct {
-	Basic
+	Webhook, AtUserIds, Text string
 }
 
 func (t Text) getContent() (url string, body interface{}, header map[string]string) {
@@ -29,8 +25,8 @@ func (t Text) getContent() (url string, body interface{}, header map[string]stri
 
 // Markdown markdown消息
 type Markdown struct {
-	Basic
-	Title string
+	Webhook, AtUserIds, Text string
+	Title                    string
 }
 
 func (t Markdown) getContent() (url string, body interface{}, header map[string]string) {
@@ -54,7 +50,7 @@ func (t Markdown) getContent() (url string, body interface{}, header map[string]
 
 // ActionCard actionCard消息
 type ActionCard struct {
-	Basic
+	Webhook, AtUserIds, Text      string
 	Title, SingleTitle, SingleURL string
 }
 

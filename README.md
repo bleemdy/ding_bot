@@ -32,10 +32,8 @@
             return func() {
 				bot.Send(
                     &message.Text{
-                        Basic: message.Basic{
-                            Text:      "定时任务消息",
-                            Webhook:   b.WebHook(),
-                        },
+						Text:      "定时任务消息",
+						Webhook:   b.WebHook(),
                     })
             }
 		})
