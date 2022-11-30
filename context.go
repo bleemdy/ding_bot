@@ -1,8 +1,8 @@
-package context
+package ding_bot
 
 import (
-	"github.com/bleemdy/ding_bot/context/internal"
 	"github.com/bleemdy/ding_bot/message"
+	"github.com/bleemdy/ding_bot/utils"
 	"strings"
 )
 
@@ -51,7 +51,7 @@ func (c Context) Send(msg message.Common) {
 
 func newContext(b *Bot, d *message.Ding) *Context {
 	args := strings.Split(strings.TrimSpace(d.Text.Content), " ")
-	content := internal.CompressStr(d.Text.Content, "")
+	content := utils.CompressStr(d.Text.Content, "")
 	return &Context{
 		b,
 		d,
