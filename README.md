@@ -9,7 +9,6 @@
     import (
         "github.com/bleemdy/ding_bot"
         "github.com/bleemdy/ding_bot/context"
-        "github.com/bleemdy/ding_bot/message"
     )
     func main() {
         b := ding_bot.New()
