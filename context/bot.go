@@ -10,37 +10,33 @@ import (
 )
 
 type Bot struct {
-	messages       chan *Context
-	commands       map[string]func(ctx *Context)
-	messageManager *message.Manager
-	schedule       *schedule.Schedule
-	webHook        string
-}
-
-func (b *Bot) WebHook() string {
-	return b.webHook
+	Messages       chan *Context
+	Commands       map[string]func(ctx *Context)
+	MessageManager *message.Manager
+	Schedule       *schedule.Schedule
+	WebHook        string
 }
 
 func (b *Bot) AddJob(taskName, spec string, f func(bot *Bot) func()) {
-	b.schedule.AddJob(taskName, spec, f(b))
+	b.Schedule.AddJob(taskName, spec, f(b))
 }
 
 func (b *Bot) push(msg *Context) {
-	b.messages <- msg
+	b.Messages <- msg
 }
 
 func (b *Bot) Send(content message.Common) {
-	b.messageManager.SendByHook(content)
+	b.MessageManager.SendByHook(content)
 }
 
 func (b *Bot) commandHandle(cmd string, c *Context) {
-	if f, ok := b.commands[cmd]; ok {
+	if f, ok := b.Commands[cmd]; ok {
 		f(c)
 	}
 }
 
 func (b *Bot) handle() {
-	for msg := range b.messages {
+	for msg := range b.Messages {
 		l := len(msg.Args)
 		if l > 0 {
 			b.commandHandle(msg.Args[0], msg)
@@ -49,16 +45,12 @@ func (b *Bot) handle() {
 }
 
 func (b *Bot) Command(c string, f func(ctx *Context)) {
-	b.commands[c] = f
-}
-
-func (b *Bot) SetWebHook(webHook string) {
-	b.webHook = webHook
+	b.Commands[c] = f
 }
 
 func (b *Bot) Run(addr, pattern string) {
-	go b.messageManager.Run()
-	go b.schedule.Run()
+	go b.MessageManager.Run()
+	go b.Schedule.Run()
 	go b.handle()
 	http.HandleFunc(pattern, func(_ http.ResponseWriter, request *http.Request) {
 		body, _ := ioutil.ReadAll(request.Body)
@@ -71,15 +63,4 @@ func (b *Bot) Run(addr, pattern string) {
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err.Error())
 	}
-}
-
-func New() *Bot {
-	botManage := &Bot{
-		make(chan *Context, 10),
-		map[string]func(ctx *Context){},
-		message.New(),
-		schedule.New(),
-		"",
-	}
-	return botManage
 }

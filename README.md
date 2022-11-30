@@ -7,10 +7,12 @@
 ```go
     package main
     import (
+        "github.com/bleemdy/ding_bot"
         "github.com/bleemdy/ding_bot/context"
+        "github.com/bleemdy/ding_bot/message"
     )
     func main() {
-        b := context.New()
+        b := ding_bot.New()
         b.Command("help", func(ctx *context.Context) {
             // do something...
         })
@@ -22,18 +24,18 @@
 ```go
     package main
     import (
+        "github.com/bleemdy/ding_bot"
         "github.com/bleemdy/ding_bot/context"
-		"github.com/bleemdy/ding_bot/message"
+        "github.com/bleemdy/ding_bot/message"
     )
     func main() {
-        b := context.New()
-        b.SetWebHook("webhook url")
+        b := ding_bot.New()
         b.AddJob("task1", "@every 1s", func(bot *context.Bot) func() {
             return func() {
-				bot.Send(
+                bot.Send(
                     &message.Text{
-						Text:      "定时任务消息",
-						Webhook:   b.WebHook(),
+                        Text:      "定时任务消息",
+                        Webhook:   b.WebHook,
                     })
             }
 		})

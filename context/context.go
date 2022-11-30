@@ -20,7 +20,7 @@ func (c Context) SendText(text string) {
 		Webhook:   c.Webhook,
 		AtUserIds: c.Message.SenderStaffId,
 	}
-	c.bot.messageManager.Send(content)
+	c.bot.MessageManager.Send(content)
 }
 
 func (c Context) SendMarkDown(title, text string) {
@@ -30,7 +30,7 @@ func (c Context) SendMarkDown(title, text string) {
 		Webhook:   c.Webhook,
 		AtUserIds: c.Message.SenderStaffId,
 	}
-	c.bot.messageManager.Send(content)
+	c.bot.MessageManager.Send(content)
 }
 
 func (c Context) SendActionCard(title, text, singleTitle, singleURL string) {
@@ -42,11 +42,11 @@ func (c Context) SendActionCard(title, text, singleTitle, singleURL string) {
 		Webhook:     c.Webhook,
 		AtUserIds:   c.Message.SenderStaffId,
 	}
-	c.bot.messageManager.Send(content)
+	c.bot.MessageManager.Send(content)
 }
 
 func (c Context) Send(msg message.Common) {
-	c.bot.messageManager.Send(msg)
+	c.bot.MessageManager.Send(msg)
 }
 
 func newContext(b *Bot, d *message.Ding) *Context {
