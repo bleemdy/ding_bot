@@ -8,11 +8,10 @@
     package main
     import (
         "github.com/bleemdy/ding_bot"
-        "github.com/bleemdy/ding_bot/context"
     )
     func main() {
         b := ding_bot.New()
-        b.Command("help", func(ctx *context.Context) {
+        b.Command("help", func(ctx *ding_bot.Context) {
             // do something...
         })
         b.Run("localhost:4000", "/ding")
@@ -24,12 +23,11 @@
     package main
     import (
         "github.com/bleemdy/ding_bot"
-        "github.com/bleemdy/ding_bot/context"
         "github.com/bleemdy/ding_bot/message"
     )
     func main() {
         b := ding_bot.New()
-        b.AddJob("task1", "@every 1s", func(bot *context.Bot) func() {
+        b.AddJob("task1", "@every 1s", func(bot *ding_bot.Bot) func() {
             return func() {
                 bot.Send(
                     &message.Text{
