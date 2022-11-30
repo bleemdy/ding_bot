@@ -11,28 +11,28 @@ type Manager struct {
 	activeMessage chan Common
 }
 
-func (m *Manager) Send(msg Common) {
+func (m Manager) Send(msg Common) {
 	m.message <- msg
 }
-func (m *Manager) SendByHook(msg Common) {
+func (m Manager) SendByHook(msg Common) {
 	m.activeMessage <- msg
 }
 
 func (m Manager) Run() {
 	go func() {
 		for mes := range m.message {
-			go m.send(mes)
+			go m.sendFunc(mes)
 		}
 	}()
 	go func() {
 		for mes := range m.activeMessage {
-			m.send(mes)
+			m.sendFunc(mes)
 			time.Sleep(3 * time.Second)
 		}
 	}()
 }
 
-func (m Manager) send(msg Common) {
+func (m Manager) sendFunc(msg Common) {
 	url, body, header := msg.getContent()
 	client := resty.New().R()
 	client.SetHeaders(header)

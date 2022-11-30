@@ -74,7 +74,6 @@ func (b *Bot) Run(addr, pattern string) {
 }
 
 func New() *Bot {
-
 	botManage := &Bot{
 		make(chan *Context, 10),
 		map[string]func(ctx *Context){},

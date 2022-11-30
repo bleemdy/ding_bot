@@ -20,7 +20,7 @@ func (t Text) getContent() (url string, body interface{}, header map[string]stri
 	header = map[string]string{
 		"Content-Type": "application/json",
 	}
-	return url, body, header
+	return
 }
 
 // Markdown markdown消息
@@ -45,7 +45,7 @@ func (t Markdown) getContent() (url string, body interface{}, header map[string]
 		"Content-Type": "application/json",
 	}
 	url = t.Webhook
-	return url, body, header
+	return
 }
 
 // ActionCard actionCard消息
@@ -72,5 +72,5 @@ func (t ActionCard) getContent() (url string, body interface{}, header map[strin
 	header = map[string]string{
 		"Content-Type": "application/json",
 	}
-	return url, body, header
+	return
 }
