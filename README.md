@@ -37,7 +37,7 @@
                 bot.Send(
                     &message.Text{
                         Text:      "定时任务消息",
-                        Webhook:   b.WebHook,
+                        Webhook:   "webhook",
                     })
             }
 		})
