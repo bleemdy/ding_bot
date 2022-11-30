@@ -29,7 +29,7 @@ func (b *Bot) push(msg *Context) {
 	b.messages <- msg
 }
 
-func (b *Bot) SendByWebhook(content message.Common) {
+func (b *Bot) Send(content message.Common) {
 	b.messageManager.SendByHook(content)
 }
 

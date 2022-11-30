@@ -51,6 +51,10 @@ func (c Context) SendActionCard(title, text, singleTitle, singleURL string) {
 	c.bot.messageManager.Send(content)
 }
 
+func (c Context) Send(msg message.Common) {
+	c.bot.messageManager.Send(msg)
+}
+
 func newContext(b *Bot, d *message.Ding) *Context {
 	args := strings.Split(strings.TrimSpace(d.Text.Content), " ")
 	content := internal.CompressStr(d.Text.Content, "")
