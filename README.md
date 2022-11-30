@@ -22,9 +22,9 @@
     )
     func main() {
         b := context.New()
-		b.Command("help", func(ctx *context.Context) {
-			// do something...
-		})
+        b.Command("help", func(ctx *context.Context) {
+            // do something...
+        })
         b.Run("localhost:4000", "/ding")
     }
 ```
@@ -38,18 +38,18 @@
     )
     func main() {
         b := context.New()
-		b.SetWebHook("webhook url")
-		b.AddJob("task1", "@every 1s", func(bot *context.Bot) func() {
-			return func() {
-				b.SendByWebhook(
-					&message.Text{
-						Basic: message.Basic{
-							Text:      "定时任务消息",
-							Webhook:   b.WebHook(),
-							AtUserIds: "",
-						},
-					})
-			}
+        b.SetWebHook("webhook url")
+        b.AddJob("task1", "@every 1s", func(bot *context.Bot) func() {
+            return func() {
+                b.SendByWebhook(
+                    &message.Text{
+                        Basic: message.Basic{
+                            Text:      "定时任务消息",
+                            Webhook:   b.WebHook(),
+                            AtUserIds: "",
+                        },
+                    })
+            }
 		})
         b.Run("localhost:4000", "/ding")
     }
