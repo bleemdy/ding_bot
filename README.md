@@ -3,6 +3,11 @@
 2. 支持webhook主动发送
 3. 定时任务（定时任务使用cron）
 
+## 安装
+```bash
+    go get -u  github.com/bleemdy/ding_bot
+```
+
 ## 基本使用
 ```go
     package main
