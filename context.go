@@ -57,6 +57,6 @@ func newContext(b *Bot, d *message.Ding) *Context {
 		d,
 		content,
 		d.SessionWebhook,
-		args,
+		args[1:],
 	}
 }
