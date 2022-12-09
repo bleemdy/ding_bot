@@ -16,9 +16,13 @@
     )
     func main() {
         b := ding_bot.New()
-        b.Command("help", func(ctx *ding_bot.Context) {
+        b.OnCommand("help", func(ctx *ding_bot.Context) {
             // do something...
         })
+		b.OnText(func(ctx *ding_bot.Context) {
+			// do something...
+			// 会逐个执行执行添加的 text handler
+		})
         b.Run("localhost:4000", "/ding")
     }
 ```
