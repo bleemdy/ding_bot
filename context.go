@@ -7,11 +7,12 @@ import (
 )
 
 type Context struct {
-	bot     *Bot
+	Bot     *Bot
 	Message *message.Ding
 	Content string
 	Webhook string
 	Args    []string
+	Command string
 }
 
 func (c Context) SendText(text string) {
@@ -20,7 +21,7 @@ func (c Context) SendText(text string) {
 		Webhook:   c.Webhook,
 		AtUserIds: c.Message.SenderStaffId,
 	}
-	c.bot.MessageManager.Send(content)
+	c.Bot.MessageManager.Send(content)
 }
 
 func (c Context) SendMarkDown(title, text string) {
@@ -30,7 +31,7 @@ func (c Context) SendMarkDown(title, text string) {
 		Webhook:   c.Webhook,
 		AtUserIds: c.Message.SenderStaffId,
 	}
-	c.bot.MessageManager.Send(content)
+	c.Bot.MessageManager.Send(content)
 }
 
 func (c Context) SendActionCard(title, text, singleTitle, singleURL string) {
@@ -42,21 +43,25 @@ func (c Context) SendActionCard(title, text, singleTitle, singleURL string) {
 		Webhook:     c.Webhook,
 		AtUserIds:   c.Message.SenderStaffId,
 	}
-	c.bot.MessageManager.Send(content)
+	c.Bot.MessageManager.Send(content)
 }
 
 func (c Context) Send(msg message.Common) {
-	c.bot.MessageManager.Send(msg)
+	c.Bot.MessageManager.Send(msg)
 }
 
 func newContext(b *Bot, d *message.Ding) *Context {
 	args := strings.Split(strings.TrimSpace(d.Text.Content), " ")
+	command := ""
+	if len(args) > 0 {
+		command = args[0]
+	}
 	content := utils.CompressStr(d.Text.Content, "")
 	return &Context{
-		b,
-		d,
-		content,
-		d.SessionWebhook,
-		args[1:],
+		Bot:     b,
+		Message: d,
+		Content: content,
+		Args:    args[1:],
+		Command: command,
 	}
 }

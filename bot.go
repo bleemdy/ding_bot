@@ -47,9 +47,11 @@ func (b *Bot) OnCommand(reg string, f func(ctx *Context)) {
 
 func (b *Bot) commandHandle(c *Context) {
 	for reg, fn := range b.Commands {
-		matched, _ := regexp.MatchString(reg, c.Message.Text.Content)
-		if matched {
-			fn(c)
+		if c.Command != "" {
+			matched, _ := regexp.MatchString(reg, c.Command)
+			if matched {
+				fn(c)
+			}
 		}
 	}
 }
