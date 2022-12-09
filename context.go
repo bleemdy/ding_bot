@@ -63,5 +63,6 @@ func newContext(b *Bot, d *message.Ding) *Context {
 		Content: content,
 		Args:    args[1:],
 		Command: command,
+		Webhook: d.SessionWebhook,
 	}
 }
