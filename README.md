@@ -1,7 +1,8 @@
 # 自用钉钉机器人
 1. 支持回调消息
 2. 支持webhook主动发送
-3. 定时任务（定时任务使用cron）
+3. 定时任务（定时任务使用[go cron](github.com/robfig/cron)）
+4. 中间件
 
 ## 安装
 ```bash
