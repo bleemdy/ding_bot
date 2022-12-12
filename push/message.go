@@ -32,7 +32,7 @@ func (m Push) Run() {
 	}()
 	go func() {
 		for mes := range m.activeMessage {
-			m.sendFunc(mes)
+			go m.sendFunc(mes)
 			time.Sleep(3 * time.Second)
 		}
 	}()
