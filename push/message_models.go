@@ -1,4 +1,4 @@
-package message
+package push
 
 // Text 文本消息
 type Text struct {

@@ -1,4 +1,4 @@
-package message
+package push
 
 // Common 通用消息接口
 type Common interface {

@@ -1,41 +1,75 @@
 package ding_bot
 
 import (
-	"github.com/bleemdy/ding_bot/message"
-	"github.com/bleemdy/ding_bot/utils"
+	"github.com/bleemdy/ding_bot/push"
+	"math"
 	"strings"
 )
 
+const abortIndex int8 = math.MaxInt8 >> 1
+
 type Context struct {
+	index   int8
 	Bot     *Bot
-	Message *message.Ding
+	Message *push.Ding
+	// 消息内容
 	Content string
 	Webhook string
 	Args    []string
 	Command string
+	// 1：单聊
+	// 2：群聊
+	ConversationType string
+	IsAdmin          bool
+	// 发送者ID
+	SenderStaffId string
+	handlers      []func(*Context)
 }
 
-func (c Context) SendText(text string) {
-	content := message.Text{
+func (c *Context) IsAborted() bool {
+	return c.index >= abortIndex
+}
+
+func (c *Context) Abort() {
+	c.index = abortIndex
+}
+
+func (c *Context) Next() {
+	c.index++
+	for c.index < int8(len(c.handlers)) {
+		c.handlers[c.index](c)
+		c.index++
+	}
+}
+
+func (c *Context) Run() {
+	if len(c.handlers) == 0 {
+		return
+	}
+	c.handlers[0](c)
+}
+
+func (c *Context) SendText(text string) {
+	content := push.Text{
 		Text:      text,
 		Webhook:   c.Webhook,
 		AtUserIds: c.Message.SenderStaffId,
 	}
-	c.Bot.MessageManager.Send(content)
+	c.Bot.Send(content)
 }
 
-func (c Context) SendMarkDown(title, text string) {
-	content := message.Markdown{
+func (c *Context) SendMarkDown(title, text string) {
+	content := push.Markdown{
 		Title:     title,
 		Text:      text,
 		Webhook:   c.Webhook,
 		AtUserIds: c.Message.SenderStaffId,
 	}
-	c.Bot.MessageManager.Send(content)
+	c.Bot.Send(content)
 }
 
-func (c Context) SendActionCard(title, text, singleTitle, singleURL string) {
-	content := message.ActionCard{
+func (c *Context) SendActionCard(title, text, singleTitle, singleURL string) {
+	content := push.ActionCard{
 		Title:       title,
 		SingleURL:   singleURL,
 		SingleTitle: singleTitle,
@@ -43,26 +77,37 @@ func (c Context) SendActionCard(title, text, singleTitle, singleURL string) {
 		Webhook:     c.Webhook,
 		AtUserIds:   c.Message.SenderStaffId,
 	}
-	c.Bot.MessageManager.Send(content)
+	c.Bot.Send(content)
 }
 
-func (c Context) Send(msg message.Common) {
-	c.Bot.MessageManager.Send(msg)
+func (c *Context) Send(msg push.Common) {
+	c.Bot.Send(msg)
 }
 
-func newContext(b *Bot, d *message.Ding) *Context {
-	args := strings.Split(strings.TrimSpace(d.Text.Content), " ")
-	command := ""
-	if len(args) > 0 {
-		command = args[0]
+func newContext(bot *Bot, ding *push.Ding) *Context {
+	isCommand := strings.Contains(ding.Text.Content, "/")
+	var args []string
+	var command string
+	content := strings.TrimSpace(ding.Text.Content)
+	if isCommand {
+		args = strings.Split(content, " ")
+		if len(args) >= 1 {
+			command = args[0]
+			args = args[1:]
+			content = strings.TrimSpace(strings.TrimLeft(content, command))
+		} else {
+			return nil
+		}
 	}
-	content := utils.CompressStr(d.Text.Content, "")
 	return &Context{
-		Bot:     b,
-		Message: d,
-		Content: content,
-		Args:    args[1:],
-		Command: command,
-		Webhook: d.SessionWebhook,
+		Bot:              bot,
+		Message:          ding,
+		Content:          content,
+		Args:             args,
+		Command:          command,
+		Webhook:          ding.SessionWebhook,
+		ConversationType: ding.ConversationType,
+		IsAdmin:          ding.IsAdmin,
+		handlers:         bot.middleWares,
 	}
 }

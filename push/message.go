@@ -1,4 +1,4 @@
-package message
+package push
 
 import (
 	"fmt"
@@ -6,19 +6,25 @@ import (
 	"time"
 )
 
-type Manager struct {
+type Pusher interface {
+	Send(Common)
+	SendByHook(Common)
+	Run()
+}
+
+type Push struct {
 	message       chan Common
 	activeMessage chan Common
 }
 
-func (m Manager) Send(msg Common) {
+func (m Push) Send(msg Common) {
 	m.message <- msg
 }
-func (m Manager) SendByHook(msg Common) {
+func (m Push) SendByHook(msg Common) {
 	m.activeMessage <- msg
 }
 
-func (m Manager) Run() {
+func (m Push) Run() {
 	go func() {
 		for mes := range m.message {
 			go m.sendFunc(mes)
@@ -32,7 +38,7 @@ func (m Manager) Run() {
 	}()
 }
 
-func (m Manager) sendFunc(msg Common) {
+func (m Push) sendFunc(msg Common) {
 	url, body, header := msg.getContent()
 	client := resty.New().R()
 	client.SetHeaders(header)
@@ -44,8 +50,8 @@ func (m Manager) sendFunc(msg Common) {
 	}
 }
 
-func New() *Manager {
-	return &Manager{
+func New() *Push {
+	return &Push{
 		message:       make(chan Common, 6),
 		activeMessage: make(chan Common, 6),
 	}
