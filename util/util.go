@@ -5,16 +5,21 @@ import (
 	"log"
 )
 
+func init() {
+	ParseConfig()
+}
+
 func ParseConfig() {
 	viper.SetConfigName("config")
 	viper.SetConfigType("toml")
 	viper.AddConfigPath(".")
-	viper.SetDefault("appSecret", "")
+	viper.SetDefault("app_secret", "")
+	viper.SetDefault("app_key", "")
 	err := viper.ReadInConfig()
-	viper.WatchConfig()
 	if err != nil {
 		if err := viper.SafeWriteConfig(); err != nil {
-			log.Fatal("write config failed: %v", err)
+			log.Fatalf("write config failed: %v", err)
 		}
 	}
+	viper.WatchConfig()
 }

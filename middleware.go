@@ -12,7 +12,7 @@ import (
 )
 
 func VerifyRequest(c *Context) {
-	appSecret := viper.GetString("appSecret")
+	appSecret := viper.GetString("app_secret")
 	timestamp := c.Request.Header.Get("timestamp")
 	timestampInt64, _ := strconv.ParseInt(timestamp, 10, 64)
 	if (time.Now().UnixNano()/1e6 - timestampInt64) > 3600000 {

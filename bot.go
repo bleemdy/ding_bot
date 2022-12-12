@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/bleemdy/ding_bot/push"
 	"github.com/bleemdy/ding_bot/schedule"
-	"github.com/bleemdy/ding_bot/util"
+	_ "github.com/bleemdy/ding_bot/util"
 	"github.com/spf13/viper"
 	"io/ioutil"
 	"log"
@@ -148,8 +148,7 @@ func New() *Bot {
 	return botManage
 }
 func NewDefault() *Bot {
-	util.ParseConfig()
-	if viper.GetString("appSecret") == "" {
+	if viper.GetString("app_secret") == "" {
 		log.Fatal("请配置config.toml appSecret")
 	}
 	botManage := &Bot{
