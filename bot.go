@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/bleemdy/ding_bot/push"
 	"github.com/bleemdy/ding_bot/schedule"
+	"github.com/bleemdy/ding_bot/util"
+	"github.com/spf13/viper"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -112,14 +114,18 @@ func (b *Bot) Run(addr, pattern string) {
 	go b.pusher.Run()
 	go b.scheduler.Run()
 	go b.handle()
-	http.HandleFunc(pattern, func(_ http.ResponseWriter, request *http.Request) {
+	http.HandleFunc(pattern, func(ResponseWriter http.ResponseWriter, request *http.Request) {
 		body, _ := ioutil.ReadAll(request.Body)
 		msg := &push.Ding{}
 		_ = json.Unmarshal(body, msg)
-		ctx := newContext(b, msg)
+		ctx := newContext(msg)
 		if ctx == nil {
 			return
 		}
+		ctx.handlers = b.middleWares
+		ctx.Bot = b
+		ctx.ResponseWriter = ResponseWriter
+		ctx.Request = request
 		b.push(ctx)
 	})
 	fmt.Printf("runing in %s\n", addr)
@@ -139,5 +145,22 @@ func New() *Bot {
 		scheduler:   schedule.New(),
 		KeywordFns:  []*KeywordItem{},
 	}
+	return botManage
+}
+func NewDefault() *Bot {
+	util.ParseConfig()
+	if viper.GetString("appSecret") == "" {
+		log.Fatal("请配置config.toml appSecret")
+	}
+	botManage := &Bot{
+		Messages:    make(chan *Context, 10),
+		commandFns:  map[string]func(ctx *Context){},
+		messageFns:  []func(ctx *Context){},
+		middleWares: []func(*Context){},
+		pusher:      push.New(),
+		scheduler:   schedule.New(),
+		KeywordFns:  []*KeywordItem{},
+	}
+	botManage.Use(VerifyRequest)
 	return botManage
 }

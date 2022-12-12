@@ -3,6 +3,7 @@ package ding_bot
 import (
 	"github.com/bleemdy/ding_bot/push"
 	"math"
+	"net/http"
 	"strings"
 )
 
@@ -22,8 +23,10 @@ type Context struct {
 	ConversationType string
 	IsAdmin          bool
 	// 发送者ID
-	SenderStaffId string
-	handlers      []func(*Context)
+	SenderStaffId  string
+	handlers       []func(*Context)
+	ResponseWriter http.ResponseWriter
+	Request        *http.Request
 }
 
 func (c *Context) IsAborted() bool {
@@ -84,7 +87,7 @@ func (c *Context) Send(msg push.Common) {
 	c.Bot.Send(msg)
 }
 
-func newContext(bot *Bot, ding *push.Ding) *Context {
+func newContext(ding *push.Ding) *Context {
 	isCommand := strings.Contains(ding.Text.Content, "/")
 	var args []string
 	var command string
@@ -100,7 +103,6 @@ func newContext(bot *Bot, ding *push.Ding) *Context {
 		}
 	}
 	return &Context{
-		Bot:              bot,
 		Message:          ding,
 		Content:          content,
 		Args:             args,
@@ -108,6 +110,5 @@ func newContext(bot *Bot, ding *push.Ding) *Context {
 		Webhook:          ding.SessionWebhook,
 		ConversationType: ding.ConversationType,
 		IsAdmin:          ding.IsAdmin,
-		handlers:         bot.middleWares,
 	}
 }
