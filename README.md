@@ -74,3 +74,15 @@
         b.Run("localhost:4000", "/ding")
     }
 ```
+
+
+## 带请求合法性验证
+```go
+    package main
+    import (
+        "github.com/bleemdy/ding_bot"
+    )
+    b := ding_bot.NewDefault()
+    // 必须在config.toml中配置机器人的appSecret
+    b.Run("localhost:4000", "/ding")
+```
