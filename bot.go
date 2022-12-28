@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"strings"
 )
 
 type KeywordItem struct {
@@ -119,13 +120,29 @@ func (b *Bot) Run(addr, pattern string) {
 		msg := &push.Ding{}
 		_ = json.Unmarshal(body, msg)
 		ctx := newContext(msg)
-		if ctx == nil {
-			return
+		var args []string
+		var command string
+		isCommand := strings.Contains(msg.Text.Content, "/")
+		content := strings.TrimSpace(msg.Text.Content)
+		if isCommand {
+			args = strings.Split(content, " ")
+			if len(args) >= 1 {
+				command = args[0]
+				args = args[1:]
+				content = strings.TrimSpace(strings.TrimLeft(content, command))
+			}
 		}
+		ctx.Message = msg
+		ctx.Content = content
+		ctx.Args = args
+		ctx.Command = command
+		ctx.Webhook = msg.SessionWebhook
+		ctx.ConversationType = msg.ConversationType
+		ctx.IsAdmin = msg.IsAdmin
 		ctx.handlers = b.middleWares
-		ctx.Bot = b
 		ctx.ResponseWriter = ResponseWriter
 		ctx.Request = request
+		ctx.pusher = b.pusher
 		b.push(ctx)
 	})
 	fmt.Printf("runing in %s\n", addr)

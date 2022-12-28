@@ -4,14 +4,13 @@ import (
 	"github.com/bleemdy/ding_bot/push"
 	"math"
 	"net/http"
-	"strings"
 )
 
 const abortIndex int8 = math.MaxInt8 >> 1
 
 type Context struct {
 	index   int8
-	Bot     *Bot
+	pusher  push.Pusher
 	Message *push.Ding
 	// 消息内容
 	Content string
@@ -58,7 +57,7 @@ func (c *Context) SendText(text string) {
 		Webhook:   c.Webhook,
 		AtUserIds: c.Message.SenderStaffId,
 	}
-	c.Bot.Send(content)
+	c.pusher.Send(content)
 }
 
 func (c *Context) SendMarkDown(title, text string) {
@@ -68,7 +67,7 @@ func (c *Context) SendMarkDown(title, text string) {
 		Webhook:   c.Webhook,
 		AtUserIds: c.Message.SenderStaffId,
 	}
-	c.Bot.Send(content)
+	c.pusher.Send(content)
 }
 
 func (c *Context) SendActionCard(title, text, singleTitle, singleURL string) {
@@ -80,35 +79,13 @@ func (c *Context) SendActionCard(title, text, singleTitle, singleURL string) {
 		Webhook:     c.Webhook,
 		AtUserIds:   c.Message.SenderStaffId,
 	}
-	c.Bot.Send(content)
+	c.pusher.Send(content)
 }
 
 func (c *Context) Send(msg push.Common) {
-	c.Bot.Send(msg)
+	c.pusher.Send(msg)
 }
 
 func newContext(ding *push.Ding) *Context {
-	isCommand := strings.Contains(ding.Text.Content, "/")
-	var args []string
-	var command string
-	content := strings.TrimSpace(ding.Text.Content)
-	if isCommand {
-		args = strings.Split(content, " ")
-		if len(args) >= 1 {
-			command = args[0]
-			args = args[1:]
-			content = strings.TrimSpace(strings.TrimLeft(content, command))
-		} else {
-			return nil
-		}
-	}
-	return &Context{
-		Message:          ding,
-		Content:          content,
-		Args:             args,
-		Command:          command,
-		Webhook:          ding.SessionWebhook,
-		ConversationType: ding.ConversationType,
-		IsAdmin:          ding.IsAdmin,
-	}
+	return &Context{}
 }
