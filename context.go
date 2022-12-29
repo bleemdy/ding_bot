@@ -86,6 +86,6 @@ func (c *Context) Send(msg push.Common) {
 	c.pusher.Send(msg)
 }
 
-func newContext(ding *push.Ding) *Context {
+func newContext() *Context {
 	return &Context{}
 }
