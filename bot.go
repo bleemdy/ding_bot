@@ -119,7 +119,7 @@ func (b *Bot) Run(addr, pattern string) {
 		body, _ := ioutil.ReadAll(request.Body)
 		msg := &push.Ding{}
 		_ = json.Unmarshal(body, msg)
-		ctx := newContext(msg)
+		ctx := newContext()
 		var args []string
 		var command string
 		isCommand := strings.Contains(msg.Text.Content, "/")
